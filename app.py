@@ -29,7 +29,7 @@ def getListings():
 
 	recordsDict = {"type":"FeatureCollection","features":[]}
 
-	records = client.command('SELECT FROM Listing WHERE [latitude,longitude,$spatial] NEAR [41.177407, 80.290192, {"maxDistance": 15}] ORDER BY RAND() LIMIT 100')
+	records = client.command('SELECT FROM Listing WHERE [latitude,longitude,$spatial] NEAR [39.937236, 116.421079, {"maxDistance": 1}] ORDER BY RAND() LIMIT 100')
 
 	random.shuffle(records)
 	records = records[:15]
