@@ -1,8 +1,10 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 import json
 import time
 import random
+from string import Template
 
 import pyorient
 
@@ -12,9 +14,16 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route("/listings")
+@app.route('/listings/')
+#@app.route('/listings/<lat>')
 def getListings():
 
+	lat = str(request.args.get('lat'))
+	lon = str(request.args.get('lon'))
+
+	print 'received lat: ' + lat
+	print 'received lon: ' + lon
+	
 	#ORIENTDB IMPLEMENTATION
 	client = pyorient.OrientDB("localhost", 2424)
 	session_id = client.connect("root", "admin")
@@ -29,10 +38,12 @@ def getListings():
 
 	recordsDict = {"type":"FeatureCollection","features":[]}
 
-	records = client.command('SELECT FROM Listing WHERE [latitude,longitude,$spatial] NEAR [39.937236, 116.421079, {"maxDistance": 1}] ORDER BY RAND() LIMIT 100')
+	#39.937236
+	s = Template('SELECT FROM Listing WHERE [latitude,longitude,$spatial] NEAR [$lat, $lon, {"maxDistance": 1}] ORDER BY RAND() LIMIT 500')
+	records = client.command(s.safe_substitute(lat = lat, lon = lon))
 
 	random.shuffle(records)
-	records = records[:15]
+	records = records[:150]
 
 	for record in records:
 		recordDict = {"type":"Feature","properties":{},"geometry":{"type":"Point"}}

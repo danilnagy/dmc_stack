@@ -97,8 +97,8 @@
            	</div>
 
     	<script type="text/javascript">
-        	
-    		var map = L.map('map').setView([39.937236, 116.421079], 15);
+    	
+    		var map = L.map('map').setView([39.907236, 116.401079], 15);
 
     		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -121,7 +121,7 @@
 				}
 
 			// call python function to query data
-			d3.json("/listings", function(data) {
+			d3.json("/listings?lat=39.907236&lon=116.401079", function(data) {
 				var transform = d3.geo.transform({point: projectPoint}),
 					path = d3.geo.path().projection(transform);
 
@@ -148,7 +148,7 @@
 				    feature
 				    	.attr("cx", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).x; })
 				    	.attr("cy", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).y; })
-				    	.attr("r", function(d) { return Math.pow(d.properties.price,.5); });
+				    	.attr("r", function(d) { return Math.pow(d.properties.price,.3); });
 				  }
 
 				
@@ -157,7 +157,7 @@
 
 			function updateData() {
 
-				d3.json("/listings", function(data) {
+				d3.json("/listings?lat=39.907236&lon=116.411079", function(data) {
 				  	console.log(data)
 
 					var transform = d3.geo.transform({point: projectPoint}),
@@ -188,7 +188,7 @@
 				    feature
 				    	.attr("cx", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).x; })
 				    	.attr("cy", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).y; })
-				    	.attr("r", function(d) { return Math.pow(d.properties.price,.5); });
+				    	.attr("r", function(d) { return Math.pow(d.properties.price,.3); });
 				  }
 
 
