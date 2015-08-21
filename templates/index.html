@@ -107,6 +107,9 @@
     		accessToken: 'pk.eyJ1IjoiZGFuaWxuYWd5IiwiYSI6ImVobm1tZWsifQ.CGQL9qrfNzMYtaQMiI-c8A'
 			}).addTo(map);
 
+    		mapBounds = map.getBounds();
+			console.log(mapBounds);
+
 			var svg = d3.select(map.getPanes().overlayPane).append("svg"),
 				g = svg.append("g").attr("class", "leaflet-zoom-hide");
 

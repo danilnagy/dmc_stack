@@ -26,9 +26,9 @@ def getListings():
 	
 	#ORIENTDB IMPLEMENTATION
 	client = pyorient.OrientDB("localhost", 2424)
-	session_id = client.connect("root", "admin")
+	session_id = client.connect("root", "password")
 
-	db_name = "soufun"
+	db_name = "property_test"
 
 	if client.db_exists( db_name, pyorient.STORAGE_TYPE_MEMORY ):
 		client.db_open( db_name, "admin", "admin" )
