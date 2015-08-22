@@ -18,11 +18,13 @@ def index():
 #@app.route('/listings/<lat>')
 def getListings():
 
-	lat = str(request.args.get('lat'))
-	lon = str(request.args.get('lon'))
+	lat1 = str(request.args.get('lat1'))
+	lng1 = str(request.args.get('lng1'))
+	lat2 = str(request.args.get('lat2'))
+	lng2 = str(request.args.get('lng2'))
 
-	print 'received lat: ' + lat
-	print 'received lon: ' + lon
+	print 'received lat: ' + lat1 + ', ' + lat2
+	print 'received lon: ' + lng1 + ', ' + lng2
 	
 	#ORIENTDB IMPLEMENTATION
 	client = pyorient.OrientDB("localhost", 2424)
@@ -39,8 +41,9 @@ def getListings():
 	recordsDict = {"type":"FeatureCollection","features":[]}
 
 	#39.937236
-	s = Template('SELECT FROM Listing WHERE [latitude,longitude,$spatial] NEAR [$lat, $lon, {"maxDistance": 1}] ORDER BY RAND() LIMIT 500')
-	records = client.command(s.safe_substitute(lat = lat, lon = lon))
+	s = Template('SELECT FROM Listing WHERE latitude BETWEEN $lat1 AND $lat2 AND longitude BETWEEN $lng1 AND $lng2')
+	#s = Template('SELECT FROM Listing WHERE [latitude,longitude,$spatial] NEAR [$lat, $lon, {"maxDistance": 1}] ORDER BY RAND() LIMIT 500')
+	records = client.command(s.safe_substitute(lat1 = lat1, lng1 = lng1, lat2 = lat2, lng2 = lng2))
 
 	random.shuffle(records)
 	records = records[:150]

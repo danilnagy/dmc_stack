@@ -109,6 +109,11 @@
 
     		mapBounds = map.getBounds();
 			console.log(mapBounds);
+			lat1 = mapBounds["_southWest"]["lat"];
+			lat2 = mapBounds["_northEast"]["lat"];
+			lng1 = mapBounds["_southWest"]["lng"];
+			lng2 = mapBounds["_northEast"]["lng"];
+			console.log(lat1, lat2, lng1, lng2);
 
 			var svg = d3.select(map.getPanes().overlayPane).append("svg"),
 				g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -124,7 +129,7 @@
 				}
 
 			// call python function to query data
-			d3.json("/listings?lat=39.907236&lon=116.401079", function(data) {
+			d3.json("/listings?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2, function(data) {
 				var transform = d3.geo.transform({point: projectPoint}),
 					path = d3.geo.path().projection(transform);
 
