@@ -17,9 +17,32 @@ h6 {
     font-weight: 500;
 }
 h4{	
-	background-color: yellow;
+	background-color: #FFF829;
 	font-size: 1.5em;
 }
+
+/* unvisited link */
+a:link {
+    color: #7326AE;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+/* visited link */
+a:visited {
+    color: #C5208F;
+}
+
+/* mouse over link */
+a:hover {
+    color: #87005B;
+}
+
+/* selected link */
+a:active {
+    color: #87005B;
+}
+
 html, body, #map {
 	height: 100%;
 }
@@ -40,6 +63,19 @@ p.footer{
 	margin: 0;
 }
 
+input[type="button"] {
+  border: 0px;
+  color: white;
+  padding: 8px 16px;
+  background-color: #9BD602;
+  /*font-size: 14px;*/
+  border-radius: 4px;
+  /*outline: 5;*/
+}
+input[type="button"]:hover {
+  background-color: #79A700;
+}
+
 svg {
   position: relative;
 }
@@ -52,13 +88,15 @@ path {
 }
 
 circle {
-  fill: orange;
+  fill: #FFD529;
   fill-opacity: .2;
   stroke: grey;
-  stroke-width: 1px;
+  stroke-width: 0px;
 }
 
-path:hover {
-  fill: brown;
+circle:hover {
+  fill: #E3B602;
   fill-opacity: .7;
+  stroke: grey;
+  stroke-width: 1px;
 }

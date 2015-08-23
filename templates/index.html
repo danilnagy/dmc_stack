@@ -23,13 +23,19 @@
 
     	<!-- create fixed HUD -->
     	<div class="fixed">
-    		<h4>DMC Web Stack Demo</h4>
+    		<h4>DMC Web Stack</h4>
     		<p>Interactive map using data scraped from htpp://www.fang.com.</p>
-    		<p class="footer">&copy;2015 Danil Nagy</p>
+    		<p>Click this button to request new data from server backend using current map extents:</p>
+    		<p class="footer"><a href="https://github.com/danilnagy/dmc_stack" target="_blank">GIT source</a><br>&copy;2015 Danil Nagy</p>
     		<input name="updateButton" 
            		type="button" 
            		value="Update Random Data" 
            		onclick="updateData()" />
+       		<p>Click this button to run heat map training on the backend and return results:</p>
+       		<input name="hmButton" 
+           		type="button" 
+           		value="Generate Heat Map" 
+           		onclick="generateHeatMap()" />
            	</div>
 
         <!-- call main function script -->

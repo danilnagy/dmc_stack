@@ -42,10 +42,16 @@ def getListings():
 
 	
 	s = Template('SELECT FROM Listing WHERE latitude BETWEEN $lat1 AND $lat2 AND longitude BETWEEN $lng1 AND $lng2')
+	
+	# TO IMPLEMENT: COMPOSITE KEY SEARCH
+	#s = Template('SELECT * FROM INDEX:Listing.latitude_longitude WHERE key BETWEEN [$lat1, $lng1] AND [$lat2, $lng2]')
+	
 	records = client.command(s.safe_substitute(lat1 = lat1, lng1 = lng1, lat2 = lat2, lng2 = lng2))
 
 	random.shuffle(records)
 	records = records[:1000]
+
+	#print records[0]
 
 	for record in records:
 		recordDict = {"type":"Feature","properties":{},"geometry":{"type":"Point"}}
