@@ -40,13 +40,12 @@ def getListings():
 
 	recordsDict = {"type":"FeatureCollection","features":[]}
 
-	#39.937236
+	
 	s = Template('SELECT FROM Listing WHERE latitude BETWEEN $lat1 AND $lat2 AND longitude BETWEEN $lng1 AND $lng2')
-	#s = Template('SELECT FROM Listing WHERE [latitude,longitude,$spatial] NEAR [$lat, $lon, {"maxDistance": 1}] ORDER BY RAND() LIMIT 500')
 	records = client.command(s.safe_substitute(lat1 = lat1, lng1 = lng1, lat2 = lat2, lng2 = lng2))
 
 	random.shuffle(records)
-	records = records[:150]
+	records = records[:1000]
 
 	for record in records:
 		recordDict = {"type":"Feature","properties":{},"geometry":{"type":"Point"}}
