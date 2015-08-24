@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto:300,500);
+/*@import url(http://fonts.googleapis.com/css?family=Roboto:300,500);*/
 body {
 	padding: 0;
 	margin: 0;
@@ -91,6 +91,12 @@ circle {
   fill: #FFD529;
   fill-opacity: .2;
   stroke: grey;
+  stroke-width: 0px;
+}
+
+rect {
+  /*fill: #000;*/
+  fill-opacity: .2;
   stroke-width: 0px;
 }
 

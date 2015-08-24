@@ -5,6 +5,7 @@
         <title>DMC Web Stack</title>
 
         <!-- import reference files -->
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <script type="text/javascript" src="./static/lib/d3.js"></script>
   		<script type="text/javascript" src="./static/lib/queue.js"></script>
   		<link rel="stylesheet" href="./static/lib/leaflet.css" />
@@ -27,10 +28,13 @@
     		<p>Interactive map using data scraped from htpp://www.fang.com.</p>
     		<p>Click this button to request new data from server backend using current map extents:</p>
     		<p class="footer"><a href="https://github.com/danilnagy/dmc_stack" target="_blank">GIT source</a><br>&copy;2015 Danil Nagy</p>
+    		<form>
     		<input name="updateButton" 
            		type="button" 
            		value="Update Random Data" 
-           		onclick="updateData()" />
+           		onclick="updateWithCheck()" /><br>
+           		<input id="checkHM" type="checkbox">Generate Heat Map<br>
+           	</form>
        		<p>Click this button to run heat map training on the backend and return results:</p>
        		<input name="hmButton" 
            		type="button" 
