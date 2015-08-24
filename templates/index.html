@@ -26,20 +26,19 @@
     	<div class="fixed">
     		<h4>DMC Web Stack</h4>
     		<p>Interactive map using data scraped from htpp://www.fang.com.</p>
-    		<p>Click this button to request new data from server backend using current map extents:</p>
+    		<p>Use this form to request new data from the server backend using current map extents.</p>
+    		<p>Use the checkbox to specify whether to use Machine Learning to generate a heat map overlay over the data. Enter the desired heat map resolution (in pixels per unit) into the text box. Then press the button to get the data.</p>
     		<p class="footer"><a href="https://github.com/danilnagy/dmc_stack" target="_blank">GIT source</a><br>&copy;2015 Danil Nagy</p>
     		<form>
-    		<input name="updateButton" 
+    		<p><input 
+           		id="checkHM" 
+           		type="checkbox"
+           		onclick="toggleHM()">Show Heat Map</p>
+    		<p><input name="updateButton" 
            		type="button" 
-           		value="Update Random Data" 
-           		onclick="updateWithCheck()" /><br>
-           		<input id="checkHM" type="checkbox">Generate Heat Map<br>
+           		value="Update Data" 
+           		onclick="updateData()" /></p>
            	</form>
-       		<p>Click this button to run heat map training on the backend and return results:</p>
-       		<input name="hmButton" 
-           		type="button" 
-           		value="Generate Heat Map" 
-           		onclick="generateHeatMap()" />
            	</div>
 
         <!-- call main function script -->

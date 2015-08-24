@@ -1,18 +1,22 @@
 var map = L.map('map').setView([39.907236, 116.401079], 15);
 
 //initialize leaflet
-// L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-// attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-// maxZoom: 18,
-// id: 'danilnagy.7dba0108',
-// accessToken: 'pk.eyJ1IjoiZGFuaWxuYWd5IiwiYSI6ImVobm1tZWsifQ.CGQL9qrfNzMYtaQMiI-c8A'
-// }).addTo(map);
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+maxZoom: 18,
+id: 'danilnagy.7dba0108',
+accessToken: 'pk.eyJ1IjoiZGFuaWxuYWd5IiwiYSI6ImVobm1tZWsifQ.CGQL9qrfNzMYtaQMiI-c8A'
+}).addTo(map);
 
 //create variable to store path to svg and g elements
 var svg = d3.select(map.getPanes().overlayPane).append("svg"),
 	g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
+var svgML = d3.select(map.getPanes().overlayPane).append("svg")
+			.attr("width",window.innerWidth)
+			.attr("height",window.innerHeight),
 
+			gML = svgML.append("g").attr("class", "leaflet-zoom-hide");
 
 // Use Leaflet to implement a D3 geometric transformation.
 function projectPoint(x, y) {
@@ -29,30 +33,24 @@ path = d3.geo.path().projection(transform);
 //call function to get data on first page load
 updateData();
 
+function toggleHM(){
+	var c = document.getElementById('checkHM');
+	if (c.checked) {
+		gML.selectAll("rect").attr("fill-opacity", ".2")
+	}else{
+		gML.selectAll("rect").attr("fill-opacity", "0")
+	}
+}
 
-var svgML = d3.select(map.getPanes().overlayPane).append("svg")
-			.attr("width",window.innerWidth)
-			.attr("height",window.innerHeight),
-
-			gML = svgML.append("g").attr("class", "leaflet-zoom-hide");
-
-//function to get data
-
-function updateWithCheck(){
+function updateData(){
 
 	mapBounds = map.getBounds();
-	//console.log(mapBounds);
 	lat1 = mapBounds["_southWest"]["lat"];
 	lat2 = mapBounds["_northEast"]["lat"];
 	lng1 = mapBounds["_southWest"]["lng"];
 	lng2 = mapBounds["_northEast"]["lng"];
-	//console.log(lat1, lat2, lng1, lng2);
 
-	// var feature = g.selectAll("rect")
-	// 	.data(data.features)
-	// 	.enter().append("circle");
-
-	res = 30;
+	res = 10;
 	var w = window.innerWidth;
 	var h = window.innerHeight;
 	var numW = Math.floor(w/res);
@@ -60,28 +58,16 @@ function updateWithCheck(){
 
 	var offsetLeft = (w - numW * res) / 2.0 ;
 	var offsetTop = (h - numH * res) / 2.0 ;
-
-	// console.log(numW, numH)
-
-	// request = "/listings?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2
 	
+	request = "/updateData?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2
+
 	var c = document.getElementById('checkHM');
 
 	if (c.checked) {
-		request = "/checkbox?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2 + "&w=" + w + "&h=" + h + "&res=" + res+ "&HM=" + "1"
+		request = request + "&w=" + w + "&h=" + h + "&res=" + res + "&HM=" + "1"
 	}else{
-		request = "/checkbox?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2 + "&w=" + w + "&h=" + h + "&res=" + res+ "&HM=" + "0"
+		request = request + "&HM=0"
 	}
-
-	// var c = document.getElementById('checkHM');
-
-	// if (c.checked) {
- //    	console.log("checked");
- //    	request = "/heatmap?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2 + "&w=" + w + "&h=" + h + "&res=" + res
- //  	}else{
- //  		console.log("UNchecked");
- //  		request = "/listings?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2
- //  	}
 
   	d3.json(request, function(data) {
 
@@ -95,58 +81,28 @@ function updateWithCheck(){
 		.enter().append("circle");
 
 
-
-
-
-		// map.on("viewreset", reset);
-		  //reset();
-
-		  // Reposition the SVG to cover the features.
-		  // function reset() {
-
-
-		  	// feature.remove()
-		    //var bounds = path.bounds(data),
-		    
-		  // }
-
-
-
-
-
-
-
 	  map.on("viewreset", reset);
 	  reset();
 
 	  if (c.checked) {
-	  var rectFeature = gML.selectAll("rect").data(data.HM);
-
-		rectFeature.enter().append("rect");
-
-		rectFeature.exit().remove()
+	  	var rectFeature = gML.selectAll("rect").data(data.HM);
+			rectFeature.enter().append("rect");
+			rectFeature.exit().remove()
 
 
-	  var    TL = latlngPoint(lat2, lng1);
-		        // bottomRight = latlngPoint(lat1, lng2);
-
-		    console.log(TL);
-		    // console.log(bottomRight);
+	  	var TL = latlngPoint(lat2, lng1);
 
 		    svgML 
-		    	// .attr("width", bottomRight[0] - topLeft[0] + 500)
-		     //    .attr("height", bottomRight[1] - topLeft[1] + 500)
 		        .style("left", (TL.x) + "px")
 		        .style("top", (TL.y) + "px");
-
-		    // gML   .attr("transform", "translate(" + (-topLeft.x) + "," + (-topLeft.y) + ")");
 
 		    rectFeature
 	    	.attr("x", function(d) { return d.x; })
 	    	.attr("y", function(d) { return d.y; })
 	    	.attr("width", function(d) { return d.width; })
 	    	.attr("height", function(d) { return d.height; })
-	    	.attr("fill", function(d) { return "hsl(" + Math.floor(d.val*250) + ", 100%, 50%)"; });
+	    	.attr("fill", function(d) { return "hsl(" + Math.floor(d.val*250) + ", 100%, 50%)"; })
+	    	.attr("fill-opacity", ".2");
 }
 
 	  // Reposition the SVG to cover the features.
@@ -178,171 +134,3 @@ function updateWithCheck(){
 
 }
 
-
-function updateData() {
-
-	//get map bounderies from leaflet
-	mapBounds = map.getBounds();
-	//console.log(mapBounds);
-	lat1 = mapBounds["_southWest"]["lat"];
-	lat2 = mapBounds["_northEast"]["lat"];
-	lng1 = mapBounds["_southWest"]["lng"];
-	lng2 = mapBounds["_northEast"]["lng"];
-	console.log(lat1, lat2, lng1, lng2);
-
-
-
-
-	//get data from server using http request
-	d3.json("/listings?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2, function(data) {
-
-		console.log(data);
-		//remove any existing circles on map
-		d3.selectAll("circle").remove()
-
-		//create placeholder circle geometry and bind it to data
-		var feature = g.selectAll("cirlce")
-		.data(data.features)
-		.enter().append("circle");
-
-	  map.on("viewreset", reset);
-	  reset();
-
-	  // Reposition the SVG to cover the features.
-	  function reset() {
-	    var bounds = path.bounds(data),
-	        topLeft = bounds[0],
-	        bottomRight = bounds[1];
-
-	    console.log(bounds);
-
-	    svg .attr("width", bottomRight[0] - topLeft[0] + 500)
-	        .attr("height", bottomRight[1] - topLeft[1] + 500)
-	        .style("left", (topLeft[0] - 250) + "px")
-	        .style("top", (topLeft[1] - 250) + "px");
-
-	    g   .attr("transform", "translate(" + (-topLeft[0] + 250) + "," + (-topLeft[1] + 250) + ")");
-
-	    feature
-	    	.attr("cx", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).x; })
-	    	.attr("cy", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).y; })
-	    	.attr("r", function(d) { return Math.pow(d.properties.price,.3); });
-	  }
-
-
-	});
-
-}
-
-function generateHeatMap() {
-
-	updateData();
-
-	mapBounds = map.getBounds();
-	//console.log(mapBounds);
-	lat1 = mapBounds["_southWest"]["lat"];
-	lat2 = mapBounds["_northEast"]["lat"];
-	lng1 = mapBounds["_southWest"]["lng"];
-	lng2 = mapBounds["_northEast"]["lng"];
-	console.log(lat1, lat2, lng1, lng2);
-
-	// var feature = g.selectAll("rect")
-	// 	.data(data.features)
-	// 	.enter().append("circle");
-
-	res = 30;
-	var w = window.innerWidth;
-	var h = window.innerHeight;
-	var numW = Math.floor(w/res);
-	var numH = Math.floor(h/res);
-
-	var offsetLeft = (w - numW * res) / 2.0 ;
-	var offsetTop = (h - numH * res) / 2.0 ;
-
-	console.log(numW, numH)
-
-
-
-	d3.json("/heatmap?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2 + "&w=" + w + "&h=" + h + "&res=" + res, function(data) {
-
-		// var values = data.data;
-		// console.log(values);
-
-
-		// for (j = 0; j < values.length; j++){
-		// 	for (i = 0; i < values[0].length; i++){
-		// 		gML.append("rect")
-		// 		.attr("x", offsetLeft + i*res)
-		// 		.attr("y", offsetTop + j*res)
-		// 		.attr("width", res-1)
-		// 		.attr("height", res-1)
-		// 		.attr("fill", "hsl(" + Math.floor(values[j][i]*250) + ", 100%, 50%)");
-
-		// 		// .attr("fill", "hsl(" + Math.floor((1.0-((i/numW) * (j/numH) ))*250) + ", 100%, 50%)");
-		// 	}
-		// }
-
-		console.log(data)
-
-				//create svg and g for ML overlay
-		
-
-		var feature = gML.selectAll("rect").data(data.items);
-
-		feature.enter().append("rect");
-
-		feature.exit().remove()
-
-		map.on("viewreset", reset);
-		  //reset();
-
-		  // Reposition the SVG to cover the features.
-		  function reset() {
-
-
-		  	feature.remove()
-		    //var bounds = path.bounds(data),
-		    
-		  }
-
-		 var    topLeft = latlngPoint(lat2, lng1);
-		        // bottomRight = latlngPoint(lat1, lng2);
-
-		    console.log(topLeft);
-		    // console.log(bottomRight);
-
-		    svgML 
-		    	// .attr("width", bottomRight[0] - topLeft[0] + 500)
-		     //    .attr("height", bottomRight[1] - topLeft[1] + 500)
-		        .style("left", (topLeft.x) + "px")
-		        .style("top", (topLeft.y) + "px");
-
-		    // gML   .attr("transform", "translate(" + (-topLeft.x) + "," + (-topLeft.y) + ")");
-
-		    feature
-	    	.attr("x", function(d) { return d.x; })
-	    	.attr("y", function(d) { return d.y; })
-	    	.attr("width", function(d) { return d.width; })
-	    	.attr("height", function(d) { return d.height; })
-	    	.attr("fill", function(d) { return "hsl(" + Math.floor(d.val*250) + ", 100%, 50%)"; });
-
-	    // feature
-	    // 	.attr("x", function(d) { return d.x; })
-	    // 	.attr("y", function(d) { return d.y; })
-	    // 	.attr("width", function(d) { return d.width; })
-	    // 	.attr("height", function(d) { return d.height; })
-	    // 	.attr("fill", function(d) { return "hsl(" + Math.floor(d.val*250) + ", 100%, 50%)"; });
-
-	  // }
-
-	})
-
-	
-
-	// var feature = gML.append("rect")
-	// 	.attr("x", 10)
-	// 	.attr("y", 10)
-	// 	.attr("width", 50)
-	// 	.attr("height", 100);
-
-}
