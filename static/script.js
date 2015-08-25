@@ -8,6 +8,17 @@ evtSrc.onmessage = function(e) {
  eventOutputContainer.innerHTML = e.data;
 };
 
+var tooltip = d3.select("body")
+	.append("div")
+	.attr("class", "tooltip")
+	.style("position", "absolute")
+	.style("z-index", "10")
+	.style("visibility", "hidden");
+	// .text("a simple tooltip");
+
+var tooltip_title = tooltip.append("p").attr("class", "tooltip")
+var tooltip_text = tooltip.append("p").attr("class", "tooltip")
+
 
 var map = L.map('map').setView([39.907236, 116.401079], 15);
 
@@ -29,7 +40,7 @@ var svgML = d3.select(map.getPanes().overlayPane).append("svg")
 //create variable to store path to svg and g elements
 var svg = d3.select(map.getPanes().overlayPane).append("svg"),
 	g = svg.append("g").attr("class", "leaflet-zoom-hide");
-	
+
 
 // Use Leaflet to implement a D3 geometric transformation.
 function projectPoint(x, y) {
@@ -190,7 +201,14 @@ function updateData(){
 	    feature
 	    	.attr("cx", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).x; })
 	    	.attr("cy", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).y; })
-	    	.attr("r", function(d) { return Math.pow(d.properties.price,.3); });
+	    	.attr("r", function(d) { return Math.pow(d.properties.price,.3); })
+			.on("mouseover", function(d){
+				tooltip.style("visibility", "visible");
+				tooltip_title.text(d.properties.name);
+				tooltip_text.text("Price: " + d.properties.price);
+			})
+			.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+			.on("mouseout", function(){return tooltip.style("visibility", "hidden");});;
 	  }
 
   	});

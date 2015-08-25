@@ -62,6 +62,17 @@ div.fixed {
 	/*border: 3px solid #8AC007;*/
 	background: rgba(255,255,255,.8);
 }
+
+div.tooltip{
+  padding: 6px;
+  background: white;
+}
+
+p.tooltip{
+  margin: 0px;
+  padding: 0px;
+}
+
 p.footer{
 	position: absolute;
 	bottom: 10px;
@@ -120,4 +131,5 @@ circle:hover {
   fill-opacity: .7;
   stroke: grey;
   stroke-width: 1px;
+  cursor: crosshair;
 }
