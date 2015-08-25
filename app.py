@@ -4,9 +4,8 @@ import random
 import math
 from string import Template
 
-from flask import Flask
-from flask import render_template
-from flask import request
+from flask import Flask, request, Response, render_template
+from Queue import Queue
 
 import pyorient
 
@@ -18,6 +17,18 @@ import random
 
 app = Flask(__name__)
 
+q = Queue()
+
+def event_stream():
+    while True:
+        result = q.get()
+        yield 'data: %s\n\n' % str(result)
+
+@app.route('/eventSource/')
+def sse_source():
+    return Response(
+            event_stream(),
+            mimetype='text/event-stream')
 
 def getData(lat1,lng1,lat2,lng2):
 
@@ -60,6 +71,9 @@ def index():
 @app.route('/updateData/')
 def updateData():
 
+
+	q.put("starting data query...")
+
 	lat1 = str(request.args.get('lat1'))
 	lng1 = str(request.args.get('lng1'))
 	lat2 = str(request.args.get('lat2'))
@@ -89,8 +103,11 @@ def updateData():
 
 	print "acquired!"
 
+	q.put("finished data query...")
 
 	if HM == 1:
+
+		q.put("starting analysis...")
 
 		w = float(request.args.get('w'))
 		h = float(request.args.get('h'))
@@ -161,9 +178,11 @@ def updateData():
 		for item in recordsDict["HM"]:
 			item["val"] = item["val"] / maxVal
 
+		q.put("finished analysis...")
+
 	#pass GeoJSON data back to D3
 	return json.dumps(recordsDict)
 
-
+#MAKE SURE THREADING IS ENAMBLED FOR SSE TO FUNCTION!
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=5000,debug=True)
+    app.run(host='0.0.0.0',port=5000,debug=True,threaded=True)

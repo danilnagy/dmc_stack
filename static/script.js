@@ -1,3 +1,14 @@
+
+
+var eventOutputContainer = document.getElementById("message");
+var evtSrc = new EventSource("/eventSource");
+
+evtSrc.onmessage = function(e) {
+ console.log('data received: ' + e.data);
+ eventOutputContainer.innerHTML = e.data;
+};
+
+
 var map = L.map('map').setView([39.907236, 116.401079], 15);
 
 //initialize leaflet
