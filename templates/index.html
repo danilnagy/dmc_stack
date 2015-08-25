@@ -31,13 +31,25 @@
     		<p class="footer"><a href="https://github.com/danilnagy/dmc_stack" target="_blank">GIT source</a><br>&copy;2015 Danil Nagy</p>
     		<form>
     		<p><input 
-           		id="checkHM" 
+           		id="HM" 
            		type="checkbox"
-           		onclick="toggleHM()">Show Heat Map</p>
+              name="checkbox"
+           		onclick="toggleCheck(id)">Heat Map
+            <input 
+              id="Int" 
+              type="checkbox"
+              name="checkbox"
+              onclick="toggleCheck(id)">Interpolation </p>
+        <p>Analysis resolution (5-25px): <input 
+              id="res" 
+              type="text" 
+              name="fname"
+              value="10"></p>
     		<p><input name="updateButton" 
            		type="button" 
            		value="Update Data" 
-           		onclick="updateData()" /></p>
+           		onclick="updateData()"></p>
+              
            	</form>
            	<p>Status: <em id="message"></em></p>
            	</div>

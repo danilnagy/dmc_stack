@@ -44,13 +44,56 @@ path = d3.geo.path().projection(transform);
 //call function to get data on first page load
 updateData();
 
-function toggleHM(){
-	var c = document.getElementById('checkHM');
-	if (c.checked) {
+function toggleOverlay(status){
+	if (status) {
 		gML.selectAll("rect").attr("fill-opacity", ".2")
 	}else{
 		gML.selectAll("rect").attr("fill-opacity", "0")
 	}
+}
+
+function uncheckAll(){
+	var checks = document.getElementsByName("checkbox");
+    for(var i = 0; i < checks.length; i++){
+		checks[i].checked = false;
+	}
+}
+
+function toggleCheck(id){
+	var c = document.getElementById(id);
+	var checked = c.checked ;
+
+	uncheckAll()
+
+	if (checked) {
+		c.checked = true;
+		toggleOverlay(true);
+	}else{
+		toggleOverlay(false);
+	}
+}
+
+// function toggleHM(){
+// 	var c = document.getElementById('checkHM');
+// 	if (c.checked) {
+// 		gML.selectAll("rect").attr("fill-opacity", ".2")
+// 	}else{
+// 		gML.selectAll("rect").attr("fill-opacity", "0")
+// 	}
+// }
+
+function resCheck(){
+	var resObj = document.getElementById('res');
+	var resVal = parseInt(resObj.value);
+
+
+	if (resVal >= 5 && resVal <= 25){
+		return resVal;
+	}else{
+		resObj.value = 10;
+		return 10;
+	}
+	
 }
 
 function updateData(){
@@ -61,7 +104,7 @@ function updateData(){
 	lng1 = mapBounds["_southWest"]["lng"];
 	lng2 = mapBounds["_northEast"]["lng"];
 
-	res = 10;
+	// res = 10;
 	var w = window.innerWidth;
 	var h = window.innerHeight;
 	var numW = Math.floor(w/res);
@@ -72,7 +115,9 @@ function updateData(){
 	
 	request = "/updateData?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2
 
-	var c = document.getElementById('checkHM');
+	var c = document.getElementById('HM');
+
+	res = resCheck();
 
 	if (c.checked) {
 		request = request + "&w=" + w + "&h=" + h + "&res=" + res + "&HM=" + "1"
