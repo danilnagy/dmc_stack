@@ -19,6 +19,10 @@ app = Flask(__name__)
 
 q = Queue()
 
+def point_distance(lat1, lng1, lat2, lng2):
+	return ((lat1-lat2)**2.0 + (lng1-lng2)**2.0)**(0.5)
+
+
 def event_stream():
     while True:
         result = q.get()
@@ -67,7 +71,6 @@ def getData(lat1,lng1,lat2,lng2):
 def index():
     return render_template("index.html")
 
-
 @app.route('/updateData/')
 def updateData():
 
@@ -79,10 +82,15 @@ def updateData():
 	lat2 = str(request.args.get('lat2'))
 	lng2 = str(request.args.get('lng2'))
 
-	
+	w = float(request.args.get('w'))
+	h = float(request.args.get('h'))
+	res = float(request.args.get('res'))
 
-	HM = int(request.args.get('HM'))
-	print "HM: " + str(HM)
+
+	analysisType = request.args.get('type')
+	print "type: " + analysisType
+
+	print analysisType == 'Int'
 
 	records = getData(lat1, lng1, lat2, lng2)
 
@@ -103,15 +111,59 @@ def updateData():
 
 	print "acquired!"
 
-	q.put("finished data query...")
+	q.put("finished data query...")\
 
-	if HM == 1:
+	if analysisType == "HM":
+		#implement Heatmap code
+		q.put("starting heatmap...")
 
-		q.put("starting analysis...")
+		numW = int(math.floor(w/res))
+		numH = int(math.floor(h/res))
 
-		w = float(request.args.get('w'))
-		h = float(request.args.get('h'))
-		res = float(request.args.get('res'))
+		offsetLeft = (w - numW * res) / 2.0 ;
+		offsetTop = (h - numH * res) / 2.0 ;
+
+		recordsDict["analysis"] = []
+
+		coords = []
+
+		for j in range(numH):
+			for i in range(numW):
+
+				newItem = {}
+
+				newItem['x'] = offsetLeft + i*res
+				newItem['y'] = offsetTop + j*res
+				newItem['width'] = res-1
+				newItem['height'] = res-1
+
+				lat = np.interp(float(j)/float(numH),[0,1],[lat1,lat2])
+				lng = np.interp(float(i)/float(numW),[0,1],[lng1,lng2])
+
+				val = 0
+
+				for record in records:
+					dist = point_distance(record.latitude, record.longitude, lat, lng)
+					#print dist
+					if dist < 0.01:
+						val = val + 1
+
+				coords.append(val)
+				newItem['val'] = val
+
+				recordsDict["analysis"].append(newItem)
+
+		maxVal = np.amax(coords)
+
+		for item in recordsDict["analysis"]:
+			item["val"] = item["val"] / float(maxVal)
+
+		q.put("finished heatmap...")
+
+
+	if analysisType == "Int":
+
+		q.put("starting interpolation...")
 
 		numW = int(math.floor(w/res))
 		numH = int(math.floor(h/res))
@@ -146,7 +198,7 @@ def updateData():
 		model = svm.SVR(C=10000000, epsilon=.00001, kernel='rbf', cache_size=2000)
 		model.fit(X_train_scaled, y_train)
 
-		recordsDict["HM"] = []
+		recordsDict["analysis"] = []
 
 		coords = []
 
@@ -160,26 +212,29 @@ def updateData():
 				newItem['width'] = res-1
 				newItem['height'] = res-1
 
-				lat = np.interp(float(i)/float(numW),[0,1],[lat1,lat2])
-				lng = np.interp(float(j)/float(numH),[0,1],[lng1,lng2])
+				lat = np.interp(float(j)/float(numH),[0,1],[lat1,lat2])
+				lng = np.interp(float(i)/float(numW),[0,1],[lng1,lng2])
 
 				testData = [[lat, lng]]
 				X_test = np.asarray(testData, dtype='float')
 				X_test_scaled = scaler.transform(X_test)
 				prediction = model.predict(X_test_scaled)
 
-				coords.append(prediction[0])
-				newItem['val'] = prediction[0]
+				val = max(prediction[0], 0)
 
-				recordsDict["HM"].append(newItem)
+				coords.append(val)
+				newItem['val'] = val
+
+				recordsDict["analysis"].append(newItem)
 
 		maxVal = np.amax(coords)
 
-		for item in recordsDict["HM"]:
-			item["val"] = item["val"] / maxVal
+		for item in recordsDict["analysis"]:
+			item["val"] = item["val"] / flaot(maxVal)
 
-		q.put("finished analysis...")
+		q.put("finished interpolation...")
 
+	q.put('idle')
 	#pass GeoJSON data back to D3
 	return json.dumps(recordsDict)
 

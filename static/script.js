@@ -19,15 +19,17 @@ id: 'danilnagy.7dba0108',
 accessToken: 'pk.eyJ1IjoiZGFuaWxuYWd5IiwiYSI6ImVobm1tZWsifQ.CGQL9qrfNzMYtaQMiI-c8A'
 }).addTo(map);
 
-//create variable to store path to svg and g elements
-var svg = d3.select(map.getPanes().overlayPane).append("svg"),
-	g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
 var svgML = d3.select(map.getPanes().overlayPane).append("svg")
 			.attr("width",window.innerWidth)
 			.attr("height",window.innerHeight),
 
 			gML = svgML.append("g").attr("class", "leaflet-zoom-hide");
+
+//create variable to store path to svg and g elements
+var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+	g = svg.append("g").attr("class", "leaflet-zoom-hide");
+	
 
 // Use Leaflet to implement a D3 geometric transformation.
 function projectPoint(x, y) {
@@ -73,14 +75,15 @@ function toggleCheck(id){
 	}
 }
 
-// function toggleHM(){
-// 	var c = document.getElementById('checkHM');
-// 	if (c.checked) {
-// 		gML.selectAll("rect").attr("fill-opacity", ".2")
-// 	}else{
-// 		gML.selectAll("rect").attr("fill-opacity", "0")
-// 	}
-// }
+function whichIsChecked(){
+	var checks = document.getElementsByName("checkbox");
+	for(var i = 0; i < checks.length; i++){
+		if (checks[i].checked == true){
+			return checks[i].id;
+		}
+	}
+	return null
+}
 
 function resCheck(){
 	var resObj = document.getElementById('res');
@@ -113,17 +116,22 @@ function updateData(){
 	var offsetLeft = (w - numW * res) / 2.0 ;
 	var offsetTop = (h - numH * res) / 2.0 ;
 	
-	request = "/updateData?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2
+	
 
-	var c = document.getElementById('HM');
+	// var c = document.getElementById('HM');
 
 	res = resCheck();
+	type = whichIsChecked();
 
-	if (c.checked) {
-		request = request + "&w=" + w + "&h=" + h + "&res=" + res + "&HM=" + "1"
-	}else{
-		request = request + "&HM=0"
-	}
+
+	request = "/updateData?lat1=" + lat1 + "&lat2=" + lat2 + "&lng1=" + lng1 + "&lng2=" + lng2 + "&w=" + w + "&h=" + h + "&res=" + res + "&type=" + type
+	console.log(request);
+
+	// if (c.checked) {
+	// 	request = request + "&w=" + w + "&h=" + h + "&res=" + res + "&HM=" + "1"
+	// }else{
+	// 	request = request + "&HM=0"
+	// }
 
   	d3.json(request, function(data) {
 
@@ -140,8 +148,8 @@ function updateData(){
 	  map.on("viewreset", reset);
 	  reset();
 
-	  if (c.checked) {
-	  	var rectFeature = gML.selectAll("rect").data(data.HM);
+	  if (type != null) {
+	  	var rectFeature = gML.selectAll("rect").data(data.analysis);
 			rectFeature.enter().append("rect");
 			rectFeature.exit().remove()
 
@@ -157,7 +165,7 @@ function updateData(){
 	    	.attr("y", function(d) { return d.y; })
 	    	.attr("width", function(d) { return d.width; })
 	    	.attr("height", function(d) { return d.height; })
-	    	.attr("fill", function(d) { return "hsl(" + Math.floor(d.val*250) + ", 100%, 50%)"; })
+	    	.attr("fill", function(d) { return "hsl(" + Math.floor((1-d.val)*250) + ", 100%, 50%)"; })
 	    	.attr("fill-opacity", ".2");
 }
 
@@ -189,4 +197,3 @@ function updateData(){
 
 
 }
-
