@@ -161,6 +161,8 @@ def updateData():
 		q.put("finished heatmap...")
 
 
+
+
 	if analysisType == "Int":
 
 		q.put("starting interpolation...")
