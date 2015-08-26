@@ -137,7 +137,7 @@ def updateData():
 				newItem['width'] = res-1
 				newItem['height'] = res-1
 
-				lat = np.interp(float(j)/float(numH),[0,1],[lat1,lat2])
+				lat = np.interp(float(j)/float(numH),[0,1],[lat2,lat1])
 				lng = np.interp(float(i)/float(numW),[0,1],[lng1,lng2])
 
 				val = 0
@@ -212,7 +212,7 @@ def updateData():
 				newItem['width'] = res-1
 				newItem['height'] = res-1
 
-				lat = np.interp(float(j)/float(numH),[0,1],[lat1,lat2])
+				lat = np.interp(float(j)/float(numH),[0,1],[lat2,lat1])
 				lng = np.interp(float(i)/float(numW),[0,1],[lng1,lng2])
 
 				testData = [[lat, lng]]
