@@ -151,7 +151,7 @@ function updateData(){
 		d3.selectAll("circle").remove()
 
 		//create placeholder circle geometry and bind it to data
-		var feature = g.selectAll("circle")
+		var feature = g.selectAll("cirlce")
 		.data(data.points.features)
 		.enter().append("circle")
 			.on("mouseover", function(d){
@@ -209,6 +209,16 @@ function updateData(){
 	    	.attr("cx", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).x; })
 	    	.attr("cy", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).y; })
 	    	.attr("r", function(d) { return Math.pow(d.properties.price,.3); })
+<<<<<<< HEAD
+=======
+			.on("mouseover", function(d){
+				tooltip.style("visibility", "visible");
+				tooltip_title.text(d.properties.name);
+				tooltip_text.text("Price: " + d.properties.price);
+			})
+			.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+			.on("mouseout", function(){return tooltip.style("visibility", "hidden");});;
+>>>>>>> parent of 401860d... fixed tooltip for FF
 	  }
 
   	});
