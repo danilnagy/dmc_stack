@@ -173,7 +173,7 @@ def updateData():
 				for record in records:
 					dist = point_distance(record.latitude, record.longitude, lat, lng)
 					#print dist
-					if dist < 0.03:
+					if dist < 0.01:
 						val = val + 1
 
 				coords.append(val)
