@@ -35,7 +35,7 @@ var svgML = d3.select(map.getPanes().overlayPane).append("svg")
 			.attr("width",window.innerWidth)
 			.attr("height",window.innerHeight),
 
-	gML = svgML.append("g").attr("class", "leaflet-zoom-hide");
+			gML = svgML.append("g").attr("class", "leaflet-zoom-hide");
 
 //create variable to store path to svg and g elements
 var svg = d3.select(map.getPanes().overlayPane).append("svg"),
@@ -151,16 +151,9 @@ function updateData(){
 		d3.selectAll("circle").remove()
 
 		//create placeholder circle geometry and bind it to data
-		var feature = g.selectAll("cirlce")
+		var feature = g.selectAll("circle")
 		.data(data.points.features)
-		.enter().append("circle")
-			.on("mouseover", function(d){
-				tooltip.style("visibility", "visible");
-				tooltip_title.text(d.properties.name);
-				tooltip_text.text("Price: " + d.properties.price);
-			})
-			.on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
-			.on("mouseout", function(){return tooltip.style("visibility", "hidden");});;
+		.enter().append("circle");
 
 
 	  map.on("viewreset", reset);
@@ -209,16 +202,13 @@ function updateData(){
 	    	.attr("cx", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).x; })
 	    	.attr("cy", function(d) { return latlngPoint(d.geometry.coordinates[1], d.geometry.coordinates[0]).y; })
 	    	.attr("r", function(d) { return Math.pow(d.properties.price,.3); })
-<<<<<<< HEAD
-=======
 			.on("mouseover", function(d){
 				tooltip.style("visibility", "visible");
 				tooltip_title.text(d.properties.name);
 				tooltip_text.text("Price: " + d.properties.price);
 			})
-			.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+			.on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
 			.on("mouseout", function(){return tooltip.style("visibility", "hidden");});;
->>>>>>> parent of 401860d... fixed tooltip for FF
 	  }
 
   	});

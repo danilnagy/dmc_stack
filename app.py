@@ -1,5 +1,4 @@
 import json
-<<<<<<< HEAD
 import time
 import random
 import math
@@ -8,7 +7,7 @@ from string import Template
 from flask import Flask, request, Response, render_template
 from Queue import Queue
 
-#import pyorient
+import pyorient
 
 from sklearn import preprocessing
 from sklearn import svm
@@ -35,7 +34,6 @@ def sse_source():
             event_stream(),
             mimetype='text/event-stream')
 
-<<<<<<< HEAD
 def getData(lat1,lng1,lat2,lng2):
 
 	print 'received lat: ' + lat1 + ', ' + lat2
@@ -44,24 +42,15 @@ def getData(lat1,lng1,lat2,lng2):
 	#ORIENTDB IMPLEMENTATION
 	client = pyorient.OrientDB("localhost", 2424)
 	session_id = client.connect("root", "admin")
-=======
-@app.route("/listings")
-def donorschoose_projects():
 
-	# #ORIENTDB IMPLEMENTATION
-	# client = pyorient.OrientDB("localhost", 2424)
-	# session_id = client.connect("root", "password")
->>>>>>> parent of 4769dbc... d3
+	db_name = "soufun"
 
-	# db_name = "property_test"
+	if client.db_exists( db_name, pyorient.STORAGE_TYPE_MEMORY ):
+		client.db_open( db_name, "admin", "admin" )
+	else:
+		print "database does not exist!"
+		sys.exit()
 
-	# if client.db_exists( db_name, pyorient.STORAGE_TYPE_MEMORY ):
-	# 	client.db_open( db_name, "admin", "admin" )
-	# else:
-	# 	print "database does not exist!"
-	# 	sys.exit()
-
-<<<<<<< HEAD
 	s = Template('SELECT FROM Listing WHERE latitude BETWEEN $lat1 AND $lat2 AND longitude BETWEEN $lng1 AND $lng2')
 	
 	# TO IMPLEMENT: COMPOSITE KEY SEARCH
@@ -115,26 +104,10 @@ def updateData():
 		recordDict["geometry"]["coordinates"] = [record.longitude, record.latitude]
 
 		recordsDict["points"]["features"].append(recordDict)
-=======
-	# recordsDict = {"type":"FeatureCollection","features":[]}
-	# records = client.command('SELECT FROM Listing WHERE [latitude,longitude,$spatial] NEAR [41.177407, 80.290192, {"maxDistance": 1}]')
-
-	# for record in records:
-	# 	recordDict = {"type":"Feature","properties":{},"geometry":{"type":"Point"}}
-	# 	recordDict["id"] = record._rid
-	# 	recordDict["properties"]["name"] = record.title
-	# 	recordDict["properties"]["price"] = record.price
-	# 	recordDict["geometry"]["coordinates"] = [record.longitude, record.latitude]
-
-	# 	recordsDict["features"].append(recordDict)
-
-	# client.db_close()
-
->>>>>>> parent of 4769dbc... d3
 
 	#DUMMY DATA IMPLEMENTATION
-	with open("static/data.txt", 'r') as f:
-		recordsDict = json.loads(f.read())
+	# with open("static/data.txt", 'r') as f:
+	# 	recordsDict = json.loads(f.read())
 
 	print "acquired!"
 
@@ -157,7 +130,6 @@ def updateData():
 		for j in range(numH):
 			for i in range(numW):
 
-<<<<<<< HEAD
 				newItem = {}
 
 				newItem['x'] = offsetLeft + i*res
@@ -173,7 +145,7 @@ def updateData():
 				for record in records:
 					dist = point_distance(record.latitude, record.longitude, lat, lng)
 					#print dist
-					if dist < 0.01:
+					if dist < 0.03:
 						val = val + 1
 
 				coords.append(val)
@@ -187,6 +159,8 @@ def updateData():
 			item["val"] = item["val"] / float(maxVal)
 
 		q.put("finished heatmap...")
+
+
 
 
 	if analysisType == "Int":
@@ -267,7 +241,5 @@ def updateData():
 	return json.dumps(recordsDict)
 
 #MAKE SURE THREADING IS ENAMBLED FOR SSE TO FUNCTION!
-=======
->>>>>>> parent of 4769dbc... d3
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=5000,debug=True,threaded=True)
