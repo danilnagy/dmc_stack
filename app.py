@@ -41,9 +41,11 @@ def getData(lat1,lng1,lat2,lng2):
 	
 	#ORIENTDB IMPLEMENTATION
 	client = pyorient.OrientDB("localhost", 2424)
-	session_id = client.connect("root", "admin")
+	session_id = client.connect("root", "password")
+	# session_id = client.connect("root", "admin")
 
-	db_name = "soufun"
+	db_name = "property_test"
+	# db_name = "soufun"
 
 	if client.db_exists( db_name, pyorient.STORAGE_TYPE_MEMORY ):
 		client.db_open( db_name, "admin", "admin" )
@@ -159,8 +161,6 @@ def updateData():
 			item["val"] = item["val"] / float(maxVal)
 
 		q.put("finished heatmap...")
-
-
 
 
 	if analysisType == "Int":
