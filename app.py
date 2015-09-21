@@ -138,61 +138,26 @@ def updateData():
 			for i in range(numW):
 				grid[-1].append(0)
 
-		# print grid
-		# sys.exit()
 
 		for record in records:
-
-				# newItem = {}
-
-				# newItem['x'] = offsetLeft + i*res
-				# newItem['y'] = offsetTop + j*res
-				# newItem['width'] = res-1
-				# newItem['height'] = res-1
-
-				# lat = np.interp(float(j)/float(numH),[0,1],[lat2,lat1])
-				# lng = np.interp(float(i)/float(numW),[0,1],[lng1,lng2])
-
-				# val = 0
 
 				xVal = int(np.interp((record.longitude-float(lng1))/(float(lng2)-float(lng1)),[0,1],[0,numW]))
 				yVal = int(np.interp((record.latitude-float(lat1))/(float(lat2)-float(lat1)),[0,1],[numH,0]))
 
-				# print range(max(0, (yVal-5)), max(0, (yVal+5)))
-				# print range(max(0, (xVal-5)), max(0, (xVal+5)))
-
 				spread = 15
 
-				# for yRow in grid[max(0, (yVal-5)):max(0, (yVal+5))]:
 				for j in range(max(0, (yVal-spread)), min(numH, (yVal+spread))):
-					# for cell in yRow[max(0, (xVal-5)):max(0, (xVal+5))]:
 					for i in range(max(0, (xVal-spread)), min(numW, (xVal+spread))):
-						# print j, i
 						grid[j][i] += 2 * math.exp((-point_distance(i,j,xVal,yVal)**2)/(2*5**2))
-					# print yRow
-				# print xVal
 
-				# for record in records:
-				# 	dist = point_distance(record.latitude, record.longitude, lat, lng)
-				# 	#print dist
-				# 	if dist < 0.03:
-				# 		val = val + 1
-
-				# coords.append(val)
-				# newItem['val'] = val
-
-				# recordsDict["analysis"].append(newItem)
 
 		for yRow in grid:
 			for cell in yRow:
 				coords.append(cell)
 
-		# print grid
 
 		maxVal = np.amax(coords)
 
-		# for yRow in grid:
-		# 	for cell in yRow:
 		for j in range(numH):
 			for i in range(numW):
 				grid[j][i] /= float(maxVal)
@@ -210,8 +175,6 @@ def updateData():
 
 				recordsDict["analysis"].append(newItem)
 
-		# for item in recordsDict["analysis"]:
-		# 	item["val"] = item["val"] / float(maxVal)
 
 		q.put("finished heatmap...")
 
