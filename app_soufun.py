@@ -53,7 +53,7 @@ def getData(lat1,lng1,lat2,lng2):
 		print "database does not exist!"
 		sys.exit()
 
-	s = Template('SELECT FROM Listing WHERE latitude BETWEEN $lat1 AND $lat2 AND longitude BETWEEN $lng1 AND $lng2 AND prec = 1 AND conf > 60')
+	s = Template('SELECT FROM Listing WHERE latitude BETWEEN $lat1 AND $lat2 AND longitude BETWEEN $lng1 AND $lng2')
 	
 	# TO IMPLEMENT: COMPOSITE KEY SEARCH
 	#s = Template('SELECT * FROM INDEX:Listing.latitude_longitude WHERE key BETWEEN [$lat1, $lng1] AND [$lat2, $lng2]')
@@ -62,8 +62,6 @@ def getData(lat1,lng1,lat2,lng2):
 
 	random.shuffle(records)
 	records = records[:1000]
-
-	print len(records)
 
 	client.db_close()
 
@@ -93,6 +91,8 @@ def updateData():
 
 	analysisType = request.args.get('type')
 	print "type: " + analysisType
+
+	print analysisType == 'Int'
 
 	records = getData(lat1, lng1, lat2, lng2)
 
@@ -133,12 +133,6 @@ def updateData():
 		grid = []
 		coords = []
 
-		spread = 400.0 #in screen units
-		spread = int(spread / res) #in geography units
-		# spread *= float(w) / (float(lat2)-float(lat1)) #convert to screen units
-
-		print spread
-
 		for j in range(numH):
 			grid.append([])
 			for i in range(numW):
@@ -147,15 +141,14 @@ def updateData():
 
 		for record in records:
 
-				# record location on screen
 				xVal = int(np.interp((record.longitude-float(lng1))/(float(lng2)-float(lng1)),[0,1],[0,numW]))
 				yVal = int(np.interp((record.latitude-float(lat1))/(float(lat2)-float(lat1)),[0,1],[numH,0]))
 
-				# spread = 15
+				spread = 15
 
 				for j in range(max(0, (yVal-spread)), min(numH, (yVal+spread))):
 					for i in range(max(0, (xVal-spread)), min(numW, (xVal+spread))):
-						grid[j][i] += 2 * math.exp((-point_distance(i,j,xVal,yVal)**2)/(2*(spread/3)**2))
+						grid[j][i] += 2 * math.exp((-point_distance(i,j,xVal,yVal)**2)/(2*5**2))
 
 
 		for yRow in grid:
